@@ -348,3 +348,14 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# ROS
+catkin_ws/logs/
+catkin_ws/devel/
+catkin_ws/build/
+catkin_ws/install/
+catkin_ws/devel_isolated/
+catkin_ws/build_isolated/
+catkin_ws/install_isolated/
+catkin_ws/.catkin_workspace
+catkin_ws/src/CMakeLists.txt

@@ -1,0 +1,14 @@
+[submodule "catkin_ws/src/ar-tu-do"]
+	path = catkin_ws/src/ar-tu-do
+	url = https://github.com/ms-iot/ar-tu-do
+	branch = seanyen/windows
+[submodule "catkin_ws/src/vesc"]
+	path = catkin_ws/src/vesc
+	url = https://github.com/ms-iot/vesc
+	branch = seanyen/windows
+[submodule "catkin_ws/src/serial"]
+	path = catkin_ws/src/serial
+	url = https://github.com/wjwwood/serial.git
+[submodule "catkin_ws/src/ackermann_msgs"]
+	path = catkin_ws/src/ackermann_msgs
+	url = https://github.com/ros-drivers/ackermann_msgs

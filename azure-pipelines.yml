@@ -1,0 +1,42 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+jobs:
+- job: CI
+  pool: Default
+  steps:
+  - script: |
+      git submodule update --init
+      call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
+      call "c:\opt\ros\melodic\x64\setup.bat"
+      pushd catkin_ws
+      vcpkg install sdl2:x64-windows
+      pip install circle-fit
+      catkin_make --use-ninja -DCMAKE_BUILD_TYPE=Release
+    displayName: Build ROS Workspace
+  - script: |
+      mkdir ros_home
+      set ROS_HOME=%CD%\ros_home
+      pushd catkin_ws
+      call "c:\opt\ros\melodic\x64\setup.bat"
+      call ".\devel\setup.bat"
+      rosnode kill -a
+      rostest demo demo.test
+    displayName: Run ROS Tests
+  - task: PublishPipelineArtifact@1
+    inputs:
+      path: $(System.DefaultWorkingDirectory)/ros_home
+      artifact: Logs
+    condition: always()
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: 'jUnit'
+      testResultsFiles: '**\rostest-*.xml'
+      searchFolder: $(System.DefaultWorkingDirectory)/ros_home
+    condition: always()

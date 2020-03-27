@@ -1,0 +1,46 @@
+<launch>
+    <arg name="world" default="racetrack"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="false"/>
+    <arg name="debug" default="false"/>
+    <arg name="verbose" default="true"/>
+    <arg name="use_gpu" default="true"/>
+    <arg name="visualize_lidar" default="false"/>
+    <arg name="emergency_stop" default="true"/>
+
+    <!-- Mode Override
+        1 forces manual driving
+        2 forces autonomous driving
+        0 uses user input to enable the modes
+    -->
+    <arg name="mode_override" default="2"/>
+
+    <param name="world_name" value="$(arg world)"/>
+
+    <node pkg="rosbag" type="record" name="rosbag" args="--split --duration=3 /wallfollowing_visualization /scan /tf"/>
+
+    <include file="$(find racer_world)/launch/racer_gazebo.launch">
+        <arg name="world" value="$(arg world)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="verbose" value="$(arg verbose)"/>
+        <arg name="use_gpu" value="$(arg use_gpu)"/>
+        <arg name="visualize_lidar" value="$(arg visualize_lidar)"/>
+    </include>
+
+    <node name="lap_timer" pkg="simulation_tools" type="lap_timer.py" output="screen"/>
+    <include file="$(find wallfollowing2)/launch/autonomous_driving.launch"/>
+
+    <group if="$(arg emergency_stop)">
+        <include file="$(find emergency_stop)/launch/emergency_stop.launch"/>
+    </group>
+
+    <include file="$(find vesc_sim)/launch/vesc_sim.launch"/>
+    <include file="$(find car_control)/launch/car_control.launch">
+        <arg name="mode_override" value="$(arg mode_override)"/>
+    </include>
+    <test test-name="lap_time_test" pkg="demo" type="demo.py" time-limit="120"/>
+</launch>
