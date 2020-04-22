@@ -90,11 +90,13 @@ This [`ROS on Azure with Windows VM`](https://azure.microsoft.com/en-us/resource
 
 1. Navigate to the template. Click `Deploy to Azure`.
 2. A form will be brought to you and here are some important parameters for this exercise.
-   * Virtual Machine Size: Select `Standard_NV*` for GPU optimized virtual machine. This is required for Gazebo.
-   * Vm Image: Select `Visual Studio 2019` for the required toolchain to build project.
-   * Vsts Account: This is your Azure DevOps organization name. For example, this is the `name` of `https://dev.azure.com/<name>`.
-   * Vsts Personal Access Token: This is the PAT noted from the previous section.
-   * Enable Autologon: Select `True` to run build agent in the interactive session. This is required for Gazebo.
+   * **Virtual Machine Size**: Select `Standard_NV*` for GPU optimized virtual machine. This is required for Gazebo.
+   * **Vm Image**: Select `Visual Studio 2019` for the required toolchain to build project.
+   * **Pipeline Provider**: Select `AzurePipelines` to use Azure DevOps.
+   * **Vsts Account**: This is your Azure DevOps organization name. For example, this is the `name` of `https://dev.azure.com/<name>`.
+   * **Vsts Personal Access Token**: This is the PAT noted from the previous section.
+   * **Vsts Pool Name**: Leave it to `Default` to match the pool name in this exercise.
+   * **Enable Autologon**: Select `True` to run build agent in the interactive session. This is required for Gazebo.
 
    ![template](docs/template.png)
 
