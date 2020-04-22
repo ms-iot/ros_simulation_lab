@@ -8,29 +8,31 @@ trigger:
     - docs/*
 
 jobs:
-- job: WindowsCI
+- job: LinuxCI
   pool:
     name: Default
     demands:
-    - Agent.OS -equals Windows_NT
+    - Agent.OS -equals Linux
   steps:
+  - checkout: self
+    submodules: recursive
   - script: |
-      git submodule update --init
-      call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
-      call "c:\opt\ros\melodic\x64\setup.bat"
       pushd catkin_ws
-      vcpkg install sdl2:x64-windows
+      source /opt/ros/melodic/setup.sh
+      sudo apt update
+      rosdep update
+      rosdep install --from-paths src --ignore-src -r -y
       pip install circle-fit
-      catkin_make --use-ninja -DCMAKE_BUILD_TYPE=Release
+      catkin_make
     displayName: Build ROS Workspace
   - script: |
-      mkdir ros_home
-      set ROS_HOME=%CD%\ros_home
+      export ROS_HOME=$PWD/ros_home
       pushd catkin_ws
-      call "c:\opt\ros\melodic\x64\setup.bat"
-      call ".\devel\setup.bat"
+      source /opt/ros/melodic/setup.sh
+      source devel/setup.sh
+      chmod +x src/demo/nodes/demo.py
       rosnode kill -a
-      rostest demo demo.test
+      xvfb-run rostest demo demo.test
     displayName: Run ROS Tests
   - task: PublishPipelineArtifact@1
     inputs:
@@ -40,6 +42,6 @@ jobs:
   - task: PublishTestResults@2
     inputs:
       testRunner: 'jUnit'
-      testResultsFiles: '**\rostest-*.xml'
+      testResultsFiles: '**/rostest-*.xml'
       searchFolder: $(System.DefaultWorkingDirectory)/ros_home
     condition: always()
