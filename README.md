@@ -14,7 +14,7 @@ Credit goes to all the [contributors](https://github.com/Autonomous-Racing-PG/ar
 
 * Deploy and register a ROS on Windows GPU optimized virtual machine on Azure.
 
-* Integrate a GitHub project with Azure Pipelines.
+* Integrate a GitHub project with Azure Pipelines or GitHub Actions.
 
 * Observe the simulation runs and test results on the pipeline.
 
@@ -123,6 +123,41 @@ This [`ROS on Azure with Windows VM`](https://azure.microsoft.com/en-us/resource
 
 3. Check the `Test and coverage` and you can find details test results by following the pass rate hyperlink.
    ![test_results](docs/test_results.png)
+
+## Exercise 4: Provision Cloud CI Environment With GitHub Actions
+
+### Task 1: Fork this GitHub Project
+
+1. Fork this repository into your GitHub account.
+2. Go to your forked repository and navigate to the `Actions` tab.
+3. Make sure it is enabled by your permission.
+   ![github-actions](docs/github-actions.png)
+
+### Task 2: Prepare Permission For Self-Hosted GitHub Runner
+
+1. Create a GitHub [personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) and select the scope of `repo`.
+2. Take a note of the personal access token (PAT).
+
+### Task 3: Deploy Virtual Machine and Register as Self-Hosted GitHub Runner
+
+This [`ROS on Azure with Windows VM`](https://azure.microsoft.com/en-us/resources/templates/ros-vm-windows/) is a Azure quickstart template to help setup an Azure virtual machine with ROS installed.
+
+1. Navigate to the template. Click `Deploy to Azure`.
+2. A form will be brought to you and here are some important parameters for this exercise.
+   * **Virtual Machine Size**: Select `Standard_NV*` for GPU optimized virtual machine. This is required for Gazebo.
+   * **Vm Image**: Select `Visual Studio 2019` for the required toolchain to build project.
+   * **Pipeline Provider**: Select `GitHubRunner` to use Azure DevOps.
+   * **GitHub Repo**: This is your GitHub account and the repository name seperated by a forward slash. For example, `<your GitHub account>/ros_simulation_lab` is the value of this fork.
+   * **GitHub Personal Access Token**: This is the PAT noted from the previous section.
+
+### Task 4: Observe the GitHub Actions
+
+1. Navigate to the `Actions` tab and make sure workflows are listed there.
+   ![github-actions-summary](docs/github-actions-summary.png)
+
+2. Push some changes to the fork.
+3. Observe the runs of the workflows.
+   And you can explore more on [GitHub Help](https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#about-workflows).
 
 ## Contributing
 
