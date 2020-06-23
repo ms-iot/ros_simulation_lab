@@ -14,7 +14,7 @@ Credit goes to all the [contributors](https://github.com/Autonomous-Racing-PG/ar
 
 * Deploy and register a ROS on Linux virtual machine on Azure.
 
-* Integrate a GitHub project with Azure Pipelines.
+* Integrate a GitHub project with Azure Pipelines or GitHub Actions.
 
 * Observe the simulation runs and test results on the pipeline.
 
