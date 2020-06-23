@@ -122,3 +122,50 @@ This [`ROS on Azure with Linux VM`](https://azure.microsoft.com/en-us/resources/
 
 3. Check the `Test and coverage` and you can find details test results by following the pass rate hyperlink.
    ![test_results](docs/test_results.png)
+
+## Exercise 4: Provision Cloud CI Environment With GitHub Actions
+
+### Task 1: Fork this GitHub Project
+
+1. Fork this repository into your GitHub account.
+2. Go to your forked repository and navigate to the `Actions` tab.
+3. Make sure it is enabled by your permission.
+   ![github-actions](docs/github-actions.png)
+
+### Task 2: Prepare Permission For Self-Hosted GitHub Runner
+
+1. Create a GitHub [personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) and select the scope of `repo`.
+2. Take a note of the personal access token (PAT).
+
+### Task 3: Deploy Virtual Machine and Register as Self-Hosted GitHub Runner
+
+This [`ROS on Azure with Linux VM`](https://azure.microsoft.com/en-us/resources/templates/ros-vm-linux/) is a Azure quickstart template to help setup an Azure virtual machine with ROS installed.
+
+1. Navigate to the template. Click `Deploy to Azure`.
+2. A form will be brought to you and here are some important parameters for this exercise.
+   * **Pipeline Provider**: Select `GitHubRunner` to use Azure DevOps.
+   * **GitHub Repo**: This is your GitHub account and the repository name seperated by a forward slash. For example, `<your GitHub account>/ros_simulation_lab` is the value of this fork.
+   * **GitHub Personal Access Token**: This is the PAT noted from the previous section.
+
+### Task 4: Observe the GitHub Actions
+
+1. Navigate to the `Actions` tab and make sure workflows are listed there.
+   ![github-actions-summary](docs/github-actions-summary.png)
+
+2. Push some changes to the fork.
+3. Observe the runs of the workflows.
+   And you can explore more on [GitHub Help](https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#about-workflows).
+
+## Contributing
+
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
+provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
