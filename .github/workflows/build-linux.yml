@@ -1,0 +1,42 @@
+name: Build and Test on Linux
+on: [push]
+
+jobs:
+  build_and_test:
+    runs-on: [self-hosted, linux]
+    steps:
+    - name: Install the required Git version for GitHub actions to function.
+      run: |
+        sudo add-apt-repository ppa:git-core/ppa
+        sudo apt-get update
+        sudo apt-get install git -y
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Build
+      run: |
+        source /opt/ros/melodic/setup.sh
+        sudo apt update
+        rosdep update
+        rosdep install --from-paths src --ignore-src -r -y
+        pip install circle-fit
+        catkin_make
+      shell: bash {0}
+      working-directory: catkin_ws
+    - name: Run tests
+      run: |
+        export ROS_HOME=$PWD/ros_home
+        source /opt/ros/melodic/setup.sh
+        source devel/setup.sh
+        chmod +x src/demo/nodes/demo.py
+        rosnode kill -a
+        xvfb-run rostest demo demo.test
+      shell: bash {0}
+      working-directory: catkin_ws
+    - name: Archive test results # workaround: https://github.com/actions/upload-artifact/issues/76
+      run: zip -r results.zip ros_home
+      working-directory: catkin_ws
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      with:
+        path: catkin_ws/results.zip

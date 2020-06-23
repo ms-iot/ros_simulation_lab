@@ -1,4 +1,4 @@
-# ROS Simulation Lab on Azure Pipelines
+# ROS Simulation Lab on Azure Pipelines (Linux)
 
 ## Overview
 
@@ -12,7 +12,7 @@ Credit goes to all the [contributors](https://github.com/Autonomous-Racing-PG/ar
 
 * Run and observe the autonomous racecar simulation locally.
 
-* Deploy and register a ROS on Windows GPU optimized virtual machine on Azure.
+* Deploy and register a ROS on Linux virtual machine on Azure.
 
 * Integrate a GitHub project with Azure Pipelines.
 
@@ -27,36 +27,38 @@ Credit goes to all the [contributors](https://github.com/Autonomous-Racing-PG/ar
 * A GitHub account from https://github.com.
 
 This lab supports for both Windows and Linux.
-For the Linux instructions, visit [here](./Linux.md).
+For the Windows instructions, visit [here](./README.md).
 
 ## Exercise 1: Build And Run Autonomous Car Simulation Locally
 
 1. Fork this repository into your GitHub account.
-2. Follow this ROS Wiki [page](http://wiki.ros.org/Installation/Windows) to install ROS Melodic on Windows.
-3. Open the ROS command prompt, and run the following to build the project.
+2. Follow this ROS Wiki [page](http://wiki.ros.org/Installation/Ubuntu) to install ROS Melodic on Ubuntu.
+3. Open a new shell. The below example assumes using `bash`.
 
-```Batchfile
-:: Clone the github project
+```bash
+# Clone the github project
 git clone https://github.com/<your account>/ros_simulation_lab --recursive
 cd ros_simulation_lab
 
-:: install required components
-vcpkg install sdl2:x64-windows
+# install required components
+sudo apt update
+rosdep update
+rosdep install --from-paths catkin_ws/src --ignore-src -r -y
 pip install circle-fit
 
-:: build it
+# build it
 cd catkin_ws
-catkin_make --use-ninja -DCMAKE_BUILD_TYPE=RELEASE
+catkin_make
 ```
 
 4. Run the autonomous car simulation.
 
-```Batchfile
-:: source the ROS devel space.
-devel\setup.bat
+```bash
+# source the ROS devel space.
+source ./devel/setup.bat
 
-:: run the application
-roslaunch src\ar-tu-do\ros_ws\launch\gazebo.launch world:=racetrack mode_override:=2
+# run the application
+roslaunch src/ar-tu-do/ros_ws/launch/gazebo.launch world:=racetrack mode_override:=2
 ```
 
 This launch file runs a racecar in a simulated track in Gazebo and runs autonomous driving.
@@ -67,11 +69,11 @@ This launch file runs a racecar in a simulated track in Gazebo and runs autonomo
 
 1. End the previous exercise and run the following rostest file:
 
-```Batchfile
-:: source the ROS devel space.
-devel\setup.bat
+```bash
+# source the ROS devel space.
+source ./devel/setup.bat
 
-:: run the rostest
+# run the rostest
 rostest demo demo.test
 ```
 
@@ -89,19 +91,16 @@ Now let's move this exercise to cloud-hosted environment with Azure Pipelines.
 
 ### Task 2: Deploy Virtual Machine and Register as Azure DevOps Build Agent
 
-This [`ROS on Azure with Windows VM`](https://azure.microsoft.com/en-us/resources/templates/ros-vm-windows/) is a Azure quickstart template to help setup an Azure virtual machine with ROS installed.
+This [`ROS on Azure with Linux VM`](https://azure.microsoft.com/en-us/resources/templates/ros-vm-linux/) is a Azure quickstart template to help setup an Azure virtual machine with ROS installed.
 
 1. Navigate to the template. Click `Deploy to Azure`.
 2. A form will be brought to you and here are some important parameters for this exercise.
-   * **Virtual Machine Size**: Select `Standard_NV*` for GPU optimized virtual machine. This is required for Gazebo.
-   * **Vm Image**: Select `Visual Studio 2019` for the required toolchain to build project.
    * **Pipeline Provider**: Select `AzurePipelines` to use Azure DevOps.
    * **Vsts Account**: This is your Azure DevOps organization name. For example, this is the `name` of `https://dev.azure.com/<name>`.
    * **Vsts Personal Access Token**: This is the PAT noted from the previous section.
    * **Vsts Pool Name**: Leave it to `Default` to match the pool name in this exercise.
-   * **Enable Autologon**: Select `True` to run build agent in the interactive session. This is required for Gazebo.
 
-   ![template](docs/template.png)
+   ![template](docs/template-linux.png)
 
 
 ### Task 3: Integrate Your GitHub Projects With Azure Pipelines
@@ -109,7 +108,7 @@ This [`ROS on Azure with Windows VM`](https://azure.microsoft.com/en-us/resource
 1. Fork this repository into your GitHub account.
 2. The [`Integrate Your GitHub Projects With Azure Pipelines`](https://www.azuredevopslabs.com/labs/azuredevops/github-integration/) guides you how to create a pipeline for a GitHub project in Task 1 & 2.
    Use your fork as the target repository.
-3. Navigate to the "Existing Azure Pipelines YAML file" and select `azure-pipelines.yml`.
+3. Navigate to the "Existing Azure Pipelines YAML file" and select `azure-pipelines-linux.yml`.
 4. Now you should have a pipeline running (or ready to run).
 
 ### Task 4: Observe the Build Summary and Test Results
@@ -123,17 +122,3 @@ This [`ROS on Azure with Windows VM`](https://azure.microsoft.com/en-us/resource
 
 3. Check the `Test and coverage` and you can find details test results by following the pass rate hyperlink.
    ![test_results](docs/test_results.png)
-
-## Contributing
-
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

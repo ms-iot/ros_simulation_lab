@@ -1,0 +1,37 @@
+name: Build and Test on Windows
+on: [push]
+
+jobs:
+  build_and_test:
+    runs-on: [self-hosted, windows]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Build
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
+        call "c:\opt\ros\melodic\x64\setup.bat"
+        vcpkg install sdl2:x64-windows
+        pip install circle-fit
+        catkin_make --use-ninja -DCMAKE_BUILD_TYPE=Release
+      shell: cmd
+      working-directory: catkin_ws
+    - name: Run tests
+      run: |
+        mkdir ros_home
+        set ROS_HOME=%CD%\ros_home
+        call "c:\opt\ros\melodic\x64\setup.bat"
+        call ".\devel\setup.bat"
+        rosnode kill -a
+        rostest demo demo.test
+      shell: cmd
+      working-directory: catkin_ws
+    - name: Archive test results # workaround: https://github.com/actions/upload-artifact/issues/76
+      run: zip -r results.zip ros_home
+      working-directory: catkin_ws
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      with:
+        path: catkin_ws/results.zip
+
